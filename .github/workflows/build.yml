@@ -27,14 +27,16 @@ jobs:
                 systemd-vconsole-setup.service
               exec /usr/lib/systemd/systemd
             '
-          docker exec unit bash -euo pipefail -c '
+          docker exec -e CI -e GITHUB_ACTIONS unit bash -euo pipefail -c '
             for i in $(seq 1 60); do
               state=$(systemctl is-system-running 2>/dev/null || true)
               case $state in running | degraded) break ;; esac
               sleep 1
             done
+            # From omarchy-iso's own mirror first, as its workflow does.
+            sed -i "1i Server = https://mirror.omarchy.org/\$repo/os/\$arch" /etc/pacman.d/mirrorlist
             for attempt in 1 2 3; do
-              pacman -Syu --noconfirm --needed python parted diffutils jq zip unzip openssh patch git >/dev/null && break
+              pacman -Syu --noconfirm --needed python parted gcc diffutils jq zip unzip openssh patch git terminus-font imagemagick tesseract tesseract-data-eng >/dev/null && break
               [ "$attempt" -lt 3 ] || exit 1
               sleep 15
             done
