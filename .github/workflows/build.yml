@@ -33,7 +33,7 @@ jobs:
               case $state in running | degraded) break ;; esac
               sleep 1
             done
-            # From omarchy-iso's own mirror first, as its workflow does.
+            # From the omarchy-iso mirror first, as its own workflow does.
             sed -i "1i Server = https://mirror.omarchy.org/\$repo/os/\$arch" /etc/pacman.d/mirrorlist
             for attempt in 1 2 3; do
               pacman -Syu --noconfirm --needed python parted gcc diffutils jq zip unzip openssh patch git terminus-font imagemagick tesseract tesseract-data-eng >/dev/null && break
